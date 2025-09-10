@@ -41,94 +41,6 @@ exports.addSpocUser = async (req, res) => {
   }
 };
 
-// exports.bulkAddSpocUsers = async (req, res) => {
-//   console.log('Inside Bulk Add SPOC Users Controller');
-
-//   const { users } = req.body;
-
-//   // Validate input
-//   if (!Array.isArray(users) || users.length === 0) {
-//     return res.status(400).json({ message: 'Users array is required and must not be empty' });
-//   }
-
-//   try {
-//     const results = {
-//       successful: [],
-//       failed: []
-//     };
-
-//     // Process each user
-//     for (const user of users) {
-//       const { username, email, password, name } = user;
-
-//       // Validate required fields
-//       if (!username || !email || !password || !name) {
-//         results.failed.push({
-//           user,
-//           error: 'Missing required fields'
-//         });
-//         continue;
-//       }
-
-//       try {
-//         // Check if user already exists
-//         const existingUser = await logincredential.findOne({
-//           $or: [{ username }, { email: email.toLowerCase() }],
-//         });
-
-//         if (existingUser) {
-//           results.failed.push({
-//             user,
-//             error: 'Username or email already exists'
-//           });
-//           continue;
-//         }
-
-//         // Hash password
-//         const hashedPassword = await bcrypt.hash(password, 10);
-
-//         const newUser = new logincredential({
-//           username,
-//           email: email.toLowerCase(),
-//           password: hashedPassword,
-//           name,
-//           role: 'spoc',
-//         });
-
-//         await newUser.save();
-//         results.successful.push(newUser);
-//       } catch (error) {
-//         console.error(`Error saving user ${username}:`, error);
-//         results.failed.push({
-//           user,
-//           error: error.message
-//         });
-//       }
-//     }
-
-//     res.status(200).json({
-//       message: `Bulk upload completed. Successful: ${results.successful.length}, Failed: ${results.failed.length}`,
-//       ...results
-//     });
-//   } catch (error) {
-//     console.error('Error in bulk SPOC user creation:', error);
-//     res.status(500).json({ message: `Bulk user creation failed: ${error.message}` });
-//   }
-// };
-//get
-
-// exports.getSpocUsers = async (req, res) => {
-//     console.log('Inside get SPOC User Controller');
-
-//     try {
-//       const users = await logincredential.find({ role: 'spoc' }); // Filter by role 'spoc'
-//       res.status(200).json(users);
-//     } catch (error) {
-//       console.error("Error fetching SPOC users:", error);
-//       res.status(500).json({ message: 'Server error' });
-//     }
-//   };
-
 exports.bulkAddSpocUsers = async (req, res) => {
   console.log('Inside Bulk Add SPOC Users Controller');
 
@@ -136,10 +48,7 @@ exports.bulkAddSpocUsers = async (req, res) => {
 
   // Validate input
   if (!Array.isArray(users) || users.length === 0) {
-    return res.status(400).json({ 
-      success: false,
-      message: 'Users array is required and must not be empty' 
-    });
+    return res.status(400).json({ message: 'Users array is required and must not be empty' });
   }
 
   try {
@@ -163,7 +72,7 @@ exports.bulkAddSpocUsers = async (req, res) => {
 
       try {
         // Check if user already exists
-        const existingUser = await LoginCredential.findOne({
+        const existingUser = await logincredential.findOne({
           $or: [{ username }, { email: email.toLowerCase() }],
         });
 
@@ -178,7 +87,7 @@ exports.bulkAddSpocUsers = async (req, res) => {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new LoginCredential({
+        const newUser = new logincredential({
           username,
           email: email.toLowerCase(),
           password: hashedPassword,
@@ -187,12 +96,7 @@ exports.bulkAddSpocUsers = async (req, res) => {
         });
 
         await newUser.save();
-        results.successful.push({
-          _id: newUser._id,
-          username: newUser.username,
-          email: newUser.email,
-          name: newUser.name
-        });
+        results.successful.push(newUser);
       } catch (error) {
         console.error(`Error saving user ${username}:`, error);
         results.failed.push({
@@ -203,18 +107,29 @@ exports.bulkAddSpocUsers = async (req, res) => {
     }
 
     res.status(200).json({
-      success: true,
       message: `Bulk upload completed. Successful: ${results.successful.length}, Failed: ${results.failed.length}`,
-      data: results
+      ...results
     });
   } catch (error) {
     console.error('Error in bulk SPOC user creation:', error);
-    res.status(500).json({ 
-      success: false,
-      message: `Bulk user creation failed: ${error.message}` 
-    });
+    res.status(500).json({ message: `Bulk user creation failed: ${error.message}` });
   }
 };
+get
+
+exports.getSpocUsers = async (req, res) => {
+    console.log('Inside get SPOC User Controller');
+
+    try {
+      const users = await logincredential.find({ role: 'spoc' }); // Filter by role 'spoc'
+      res.status(200).json(users);
+    } catch (error) {
+      console.error("Error fetching SPOC users:", error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+
 
 
 exports.getSpocUsers = async (req, res) => {
