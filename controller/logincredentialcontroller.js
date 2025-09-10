@@ -41,7 +41,80 @@ exports.addSpocUser = async (req, res) => {
   }
 };
 
+exports.bulkAddSpocUsers = async (req, res) => {
+  console.log('Inside Bulk Add SPOC Users Controller');
 
+  const { users } = req.body;
+
+  // Validate input
+  if (!Array.isArray(users) || users.length === 0) {
+    return res.status(400).json({ message: 'Users array is required and must not be empty' });
+  }
+
+  try {
+    const results = {
+      successful: [],
+      failed: []
+    };
+
+    // Process each user
+    for (const user of users) {
+      const { username, email, password, name } = user;
+
+      // Validate required fields
+      if (!username || !email || !password || !name) {
+        results.failed.push({
+          user,
+          error: 'Missing required fields'
+        });
+        continue;
+      }
+
+      try {
+        // Check if user already exists
+        const existingUser = await logincredential.findOne({
+          $or: [{ username }, { email: email.toLowerCase() }],
+        });
+
+        if (existingUser) {
+          results.failed.push({
+            user,
+            error: 'Username or email already exists'
+          });
+          continue;
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new logincredential({
+          username,
+          email: email.toLowerCase(),
+          password: hashedPassword,
+          name,
+          role: 'spoc',
+        });
+
+        await newUser.save();
+        results.successful.push(newUser);
+      } catch (error) {
+        console.error(`Error saving user ${username}:`, error);
+        results.failed.push({
+          user,
+          error: error.message
+        });
+      }
+    }
+
+    res.status(200).json({
+      message: `Bulk upload completed. Successful: ${results.successful.length}, Failed: ${results.failed.length}`,
+      ...results
+    });
+  } catch (error) {
+    console.error('Error in bulk SPOC user creation:', error);
+    res.status(500).json({ message: `Bulk user creation failed: ${error.message}` });
+  }
+};
 //get
 
 // exports.getSpocUsers = async (req, res) => {

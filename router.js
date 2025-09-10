@@ -31,7 +31,7 @@ router.put('/update-remark/:ticketNo', compaintcontroller.updateRemark);
 
 //login
 router.post('/add-spoc',logincredentialcontroller.addSpocUser);
-
+router.post('/bulk-add', logincredentialcontroller.bulkAddSpocUsers);
 // Route to get all SPOC users
 router.get('/get-spoc-users', logincredentialcontroller.getSpocUsers);
 
