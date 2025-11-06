@@ -115,7 +115,7 @@ exports.bulkAddSpocUsers = async (req, res) => {
     res.status(500).json({ message: `Bulk user creation failed: ${error.message}` });
   }
 };
-get
+
 
 exports.getSpocUsers = async (req, res) => {
     console.log('Inside get SPOC User Controller');
