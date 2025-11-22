@@ -50,6 +50,12 @@ router.get('/get-cccomplaint', compaintcontroller.getcccomplaint);
 //upadate status and remark
 router.post("/update-status-remark/:ticketNo", compaintcontroller.updateStatusAndRemark);
 
+// delete
+
+
+router.delete("/hardware/delete-by-spoc/:spoc", addhardwarecontroller.deleteBySpoc);
+router.delete("/hardware/delete-one", addhardwarecontroller.deleteOneBySpocAndJeccid);
+router.post("/hardware/delete-spoc-bulk", addhardwarecontroller.bulkDeleteBySpoc);
 
 // Export
 module.exports = router;

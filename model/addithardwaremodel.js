@@ -68,5 +68,5 @@ const addprojectSchema = new mongoose.Schema({
     }
 })
 
-const addhardware = mongoose.model('addhardware', addprojectSchema)
-module.exports = addhardware
+// THE FIX ↓↓↓
+module.exports = mongoose.model('addhardwares', addprojectSchema);
